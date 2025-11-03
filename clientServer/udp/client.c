@@ -1,3 +1,4 @@
+// client.c
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -27,19 +28,19 @@ void receiveData(Client *c);
 void sendFile(Client *c, const char *filepath);
 
 // get port from command line or use default
-int getPort(int argc, char *argv[]) {
+int getPort(int argc, char *argv[], int defaultPort) {
     if (argc >= 3) {
         return atoi(argv[2]);
     }
-    return DEFAULT_PORT;
+    return defaultPort;
 }
 
 // get ip from command line or use default
-char* getIP(int argc, char *argv[]) {
+char* getIP(int argc, char *argv[], const char *defaultIP) {
     if (argc >= 2) {
         return argv[1];
     }
-    return (char*)DEFAULT_IP;
+    return (char*)defaultIP;
 }
 
 // initialize udp client
@@ -94,7 +95,7 @@ void sendFile(Client *c, const char *filepath) {
 // send message or file
 void sendData(Client *c) {
     char msg[BUF_SIZE];
-    printf("You: ");
+    printf("you: ");
     fgets(msg, BUF_SIZE, stdin);
     msg[strcspn(msg, "\n")] = 0;
 
@@ -113,13 +114,13 @@ void sendData(Client *c) {
 void receiveData(Client *c) {
     memset(c->buffer, 0, BUF_SIZE);
     recvfrom(c->sockfd, c->buffer, BUF_SIZE, 0, (struct sockaddr*)&c->serverAddr, &c->addr_size);
-    printf("Server: %s\n", c->buffer);
+    printf("server: %s\n", c->buffer);
 }
 
 int main(int argc, char *argv[]) {
     Client c;
-    char *ip = getIP(argc, argv);
-    int port = getPort(argc, argv);
+    char *ip = getIP(argc, argv, DEFAULT_IP);
+    int port = getPort(argc, argv, DEFAULT_PORT);
     initClient(&c, ip, port);
 
     while (1) {
