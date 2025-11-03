@@ -94,7 +94,7 @@ void receiveData(Server *s) {
 // send message to client
 void sendData(Server *s) {
     char msg[BUF_SIZE];
-    printf("Server: ");
+    printf("You: ");
     fgets(msg, BUF_SIZE, stdin);
     msg[strcspn(msg, "\n")] = 0;
 
