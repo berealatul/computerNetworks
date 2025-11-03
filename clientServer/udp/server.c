@@ -1,3 +1,4 @@
+// server.c
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -24,11 +25,11 @@ void sendData(Server *s);
 void handleFileReception(Server *s, const char *filename);
 
 // get port from command line or use default
-int getPort(int argc, char *argv[]) {
+int getPort(int argc, char *argv[], int defaultPort) {
     if (argc >= 2) {
         return atoi(argv[1]);
     }
-    return DEFAULT_PORT;
+    return defaultPort;
 }
 
 // create and bind udp socket
@@ -87,14 +88,14 @@ void receiveData(Server *s) {
         printf("client ended chat\n");
         exit(0);
     } else {
-        printf("Client: %s\n", s->buffer);
+        printf("client: %s\n", s->buffer);
     }
 }
 
 // send message to client
 void sendData(Server *s) {
     char msg[BUF_SIZE];
-    printf("You: ");
+    printf("you: ");
     fgets(msg, BUF_SIZE, stdin);
     msg[strcspn(msg, "\n")] = 0;
 
@@ -108,7 +109,8 @@ void sendData(Server *s) {
 
 int main(int argc, char *argv[]) {
     Server s;
-    initServer(&s, getPort(argc, argv));
+    int port = getPort(argc, argv, DEFAULT_PORT);
+    initServer(&s, port);
 
     while (1) {
         receiveData(&s);
